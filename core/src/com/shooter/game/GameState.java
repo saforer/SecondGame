@@ -1,18 +1,19 @@
 package com.shooter.game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 
 public class GameState extends State{
-	Vector2 pos;
-	Sprite shipSprite;
+	Ship ship;
+	List<GameObject> bulletList = new ArrayList<GameObject>();
 	public void Show() {
-		pos = Vector2.Zero;
-		shipSprite = new Sprite(new Texture("badlogic.jpg"));
+		ship = new Ship();
 	}
 	
 	public void Update(float dt) {
@@ -20,17 +21,25 @@ public class GameState extends State{
 		boolean rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 		boolean leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT);
 		boolean downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
+		boolean zPressed = Gdx.input.isKeyJustPressed(Input.Keys.Z);
 		
 		float speed = 175f;
-		if (upPressed) pos.y += speed * dt;
-		if (downPressed) pos.y -= speed * dt;
-		if (leftPressed) pos.x -= speed * dt;
-		if (rightPressed) pos.x += speed * dt;
+		if (upPressed) ship.pos.y += speed * dt;
+		if (downPressed) ship.pos.y -= speed * dt;
+		if (leftPressed) ship.pos.x -= speed * dt;
+		if (rightPressed) ship.pos.x += speed * dt;
+		if (zPressed) Fire();
+	}
+	
+	void Fire() {
+		GameObject bullet = new GameObject(new Sprite(new Texture("BulletBill.png")), ship.pos);
+		bulletList.add(bullet);
 	}
 	
 	public void Render(SpriteBatch sb) {
-		shipSprite.setX(pos.x - shipSprite.getWidth() / 2);
-		shipSprite.setY(pos.y - shipSprite.getHeight() / 2);
-		shipSprite.draw(sb);
+		ship.draw(sb);
+		for (int i = 0; i < bulletList.size(); i++) {
+			bulletList.get(i).sprite.draw(sb);
+		}
 	}
 }
