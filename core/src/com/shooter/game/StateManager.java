@@ -3,24 +3,19 @@ package com.shooter.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class StateManager {
 	public static StateManager instance;
-	SpriteBatch sb;
 	List<State> stateList = new ArrayList<State>();
 	
-	public StateManager getInstance() {
+	public static StateManager getInstance() {
 		if (instance == null) {
 			instance = new StateManager();
-			
 		}
 		return instance;
-	}
-	
-	public SpriteBatch getSB() {
-		if (sb == null) sb = new SpriteBatch();
-		return getInstance().sb;
 	}
 	
 	public void addState(State state) {
@@ -32,15 +27,24 @@ public class StateManager {
 		getInstance().stateList.clear();
 	}
 	
-	public void drawStates() {
-		for (int i = 0; i < getInstance().stateList.size(); i++) {
-			getInstance().stateList.get(i).Render();
-		}
+	public void changeState(State state) {
+		clearStates();
+		addState(state);
 	}
 	
-	public void updateStates() {
+	public void drawStates(SpriteBatch sb) {
+		Gdx.gl.glClearColor(.5f, .5f, .5f, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		sb.begin();
 		for (int i = 0; i < getInstance().stateList.size(); i++) {
-			getInstance().stateList.get(i).Update();
+			getInstance().stateList.get(i).Render(sb);
+		}
+		sb.end();
+	}
+	
+	public void updateStates(float dt) {
+		for (int i = 0; i < getInstance().stateList.size(); i++) {
+			getInstance().stateList.get(i).Update(dt);
 		}
 	}
 }
