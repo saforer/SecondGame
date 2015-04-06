@@ -5,9 +5,8 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class GameState extends State{
 	Ship ship;
@@ -17,6 +16,12 @@ public class GameState extends State{
 	}
 	
 	public void Update(float dt) {
+		ship.Update(dt);
+		for (int i = 0; i < bulletList.size(); i++) {
+			bulletList.get(i).Update(dt);
+		}
+		
+		
 		boolean upPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
 		boolean rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 		boolean leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT);
@@ -32,14 +37,21 @@ public class GameState extends State{
 	}
 	
 	void Fire() {
-		GameObject bullet = new GameObject(new Sprite(new Texture("BulletBill.png")), ship.pos);
+		Bullet bullet = new Bullet(ship.pos.cpy());
 		bulletList.add(bullet);
 	}
 	
 	public void Render(SpriteBatch sb) {
 		ship.draw(sb);
 		for (int i = 0; i < bulletList.size(); i++) {
-			bulletList.get(i).sprite.draw(sb);
+			bulletList.get(i).draw(sb);
+		}
+	}
+	
+	public void RenderShape(ShapeRenderer sr) {
+		ship.drawShape(sr);
+		for (int i = 0; i < bulletList.size(); i++) {
+			bulletList.get(i).drawShape(sr);
 		}
 	}
 }

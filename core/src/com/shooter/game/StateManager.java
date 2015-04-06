@@ -6,6 +6,8 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 public class StateManager {
 	public static StateManager instance;
@@ -32,7 +34,7 @@ public class StateManager {
 		addState(state);
 	}
 	
-	public void drawStates(SpriteBatch sb) {
+	public void drawStates(SpriteBatch sb, ShapeRenderer sr) {
 		Gdx.gl.glClearColor(.5f, .5f, .5f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		sb.begin();
@@ -40,6 +42,12 @@ public class StateManager {
 			getInstance().stateList.get(i).Render(sb);
 		}
 		sb.end();
+		
+		sr.begin(ShapeType.Filled);
+		for (int i = 0; i < getInstance().stateList.size(); i++) {
+			getInstance().stateList.get(i).RenderShape(sr);
+		}
+		sr.end();
 	}
 	
 	public void updateStates(float dt) {

@@ -6,6 +6,7 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class MainState extends State{
 	List<UIButton> mainMenu = new ArrayList<UIButton>();
@@ -31,5 +32,9 @@ public class MainState extends State{
 		for (int i = 0; i < mainMenu.size(); i++) {
 			mainMenu.get(i).Draw(sb);
 		}
+	}
+	
+	void RenderShape(ShapeRenderer sr) {
+		
 	}
 }
