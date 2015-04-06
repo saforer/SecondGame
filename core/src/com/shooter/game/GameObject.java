@@ -8,9 +8,12 @@ import com.badlogic.gdx.math.Vector2;
 public class GameObject {
 	Sprite sprite;
 	Vector2 pos;
-	public GameObject(Sprite inSprite, Vector2 inPos) {
+	int radius;
+	boolean dead = false;
+	public GameObject(Sprite inSprite, Vector2 inPos, int inRad) {
 		sprite = inSprite;
 		pos = inPos;
+		radius = inRad;
 		updateSprite();
 	}
 	
@@ -25,8 +28,16 @@ public class GameObject {
 	}
 	
 	public void drawShape(ShapeRenderer sr) {
-		sr.circle(pos.x, pos.y, 5);
+		sr.circle(pos.x, pos.y, radius);
 	}
 	
 	public void Update(float dt) {}
+	
+	public void Hurt() {
+		dead = true;
+	}
+	
+	public boolean isDead() {
+		return dead;
+	}
 }

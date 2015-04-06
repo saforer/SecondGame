@@ -10,9 +10,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class GameState extends State{
 	Ship ship;
-	List<GameObject> bulletList = new ArrayList<GameObject>();
+	List<Bullet> bulletList = new ArrayList<Bullet>();
+	List<Enemy> enemyList = new ArrayList<Enemy>();
+	
 	public void Show() {
 		ship = new Ship();
+		enemyList.add(new Enemy());
 	}
 	
 	public void Update(float dt) {
@@ -21,6 +24,9 @@ public class GameState extends State{
 			bulletList.get(i).Update(dt);
 		}
 		
+		CheckOffScreen();
+		CheckCollisions();
+		CleanDead();
 		
 		boolean upPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
 		boolean rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
@@ -42,6 +48,9 @@ public class GameState extends State{
 	}
 	
 	public void Render(SpriteBatch sb) {
+		for (int i = 0; i < enemyList.size(); i++) {
+			enemyList.get(i).draw(sb);
+		}
 		ship.draw(sb);
 		for (int i = 0; i < bulletList.size(); i++) {
 			bulletList.get(i).draw(sb);
@@ -49,9 +58,40 @@ public class GameState extends State{
 	}
 	
 	public void RenderShape(ShapeRenderer sr) {
+		for (int i = 0; i < enemyList.size(); i++) {
+			enemyList.get(i).drawShape(sr);
+		}
 		ship.drawShape(sr);
 		for (int i = 0; i < bulletList.size(); i++) {
 			bulletList.get(i).drawShape(sr);
+		}
+	}
+	
+	void CheckOffScreen() {
+		for (int i = 0; i < bulletList.size(); i++) {
+			if (bulletList.get(i).OffScreen()) bulletList.remove(i);
+		}
+	}
+	
+	void CleanDead() {
+		for (int i = 0; i < bulletList.size(); i++) {
+			if (bulletList.get(i).isDead()) bulletList.remove(i);
+		}
+		for (int i = 0; i < enemyList.size(); i++) {
+			if (enemyList.get(i).isDead()) enemyList.remove(i);
+		}
+	}
+	
+	void CheckCollisions() {
+		//Bullet - Enemy Collision
+		int totalRadius = 10 + 5;
+		for (int i = 0; i < bulletList.size(); i++) {
+			for (int j = 0; j < enemyList.size(); j++) {
+				if (bulletList.get(i).pos.dst(enemyList.get(j).pos) < totalRadius) {
+					bulletList.get(i).Hurt();
+					enemyList.get(j).Hurt();
+				}
+			}
 		}
 	}
 }
