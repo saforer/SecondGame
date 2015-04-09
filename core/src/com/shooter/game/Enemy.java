@@ -12,13 +12,20 @@ public class Enemy extends GameObject {
 	float posMovingTo;
 	float firingCooldown = 0;
 	float movingCooldown = 0;
+	float fireVar;
+	float idleAmount;
+	float moveAmount;
+	static Texture texture = new Texture("smallfreighterspr.png");
 	public Enemy(GameState inState) {
-		super (new Sprite(new Texture("smallfreighterspr.png")), new Vector2(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight() - 20), 5);
+		super (new Sprite(texture), new Vector2(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight() - 20), 5);
 		pos.x = MathUtils.random(sprite.getWidth() / 2, Gdx.graphics.getWidth() - sprite.getWidth() / 2);
 		sprite.rotate90(true);
 		sprite.rotate90(true);
 		gs = inState;
 		posMovingTo = pos.x;
+		fireVar = MathUtils.random(10f);
+		idleAmount = MathUtils.random(2f);
+		moveAmount = MathUtils.random(3f);
 	}
 	
 	public void Update(float dt) {
@@ -28,16 +35,16 @@ public class Enemy extends GameObject {
 	
 	void Fire(float dt) {
 		firingCooldown += dt;
-		if (firingCooldown > 2) {
+		if (firingCooldown > fireVar) {
 			firingCooldown = 0;
+			fireVar = MathUtils.random(10);
 			gs.enemyFire(pos.cpy());
 		}
 	}
 	
 	void Move(float dt) {
 		movingCooldown += dt;
-		float idleAmount = 2;
-		float moveAmount = 3;
+		
 		float speed = 100;
 		float right = 0;
 		float tolerance = 1;

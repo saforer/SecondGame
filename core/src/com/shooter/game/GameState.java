@@ -1,6 +1,5 @@
 package com.shooter.game;
 
-import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class GameState extends State{
 	public void Show() {
 		ship = new Ship();
 		
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 1000; i++) {
 			enemyList.add(new Enemy(this));
 		}
 	}
@@ -31,7 +30,6 @@ public class GameState extends State{
 		
 		
 		EnemyUpdate(dt);
-		CheckOffScreen();
 		CheckCollisions();
 		CleanDead();
 		CheckWin();
@@ -43,11 +41,10 @@ public class GameState extends State{
 		boolean zPressed = Gdx.input.isKeyJustPressed(Input.Keys.Z);
 		
 		if (!ship.dead) {
-			float speed = 175f;
-			if (upPressed) ship.pos.y += speed * dt;
-			if (downPressed) ship.pos.y -= speed * dt;
-			if (leftPressed) ship.pos.x -= speed * dt;
-			if (rightPressed) ship.pos.x += speed * dt;
+			if (upPressed) ship.MoveUp(dt);
+			if (downPressed) ship.MoveDown(dt);
+			if (leftPressed) ship.MoveLeft(dt);
+			if (rightPressed) ship.MoveRight(dt);
 			if (zPressed) Fire();
 		}
 	}
@@ -80,12 +77,6 @@ public class GameState extends State{
 		ship.drawShape(sr);
 		for (int i = 0; i < bulletList.size(); i++) {
 			bulletList.get(i).drawShape(sr);
-		}
-	}
-	
-	void CheckOffScreen() {
-		for (int i = 0; i < bulletList.size(); i++) {
-			if (bulletList.get(i).OffScreen()) bulletList.remove(i);
 		}
 	}
 	

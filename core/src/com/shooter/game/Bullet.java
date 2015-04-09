@@ -7,8 +7,9 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Bullet extends GameObject {
 	boolean ally;
+	private static Texture texture = new Texture("BulletBill.png");
 	public Bullet(Vector2 inPos, boolean allyIn) {
-		super(new Sprite(new Texture("BulletBill.png")), inPos.add(0,20), 10);
+		super(new Sprite(texture), inPos.add(0,20), 10);
 		ally = allyIn;
 	}
 	
@@ -16,6 +17,7 @@ public class Bullet extends GameObject {
 		float speed = 200;
 		if (!ally) speed *= -1;
 		pos.add(0, speed * dt);
+		if (OffScreen()) dead = true;
 	}
 	
 	public boolean OffScreen() {
