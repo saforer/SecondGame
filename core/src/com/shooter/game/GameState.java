@@ -1,5 +1,6 @@
 package com.shooter.game;
 
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 
 public class GameState extends State{
 	Ship ship;
@@ -15,7 +17,10 @@ public class GameState extends State{
 	
 	public void Show() {
 		ship = new Ship();
-		enemyList.add(new Enemy());
+		
+		for (int i = 0; i < 30; i++) {
+			enemyList.add(new Enemy(this));
+		}
 	}
 	
 	public void Update(float dt) {
@@ -24,9 +29,12 @@ public class GameState extends State{
 			bulletList.get(i).Update(dt);
 		}
 		
+		
+		EnemyUpdate(dt);
 		CheckOffScreen();
 		CheckCollisions();
 		CleanDead();
+		CheckWin();
 		
 		boolean upPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
 		boolean rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
@@ -34,16 +42,24 @@ public class GameState extends State{
 		boolean downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
 		boolean zPressed = Gdx.input.isKeyJustPressed(Input.Keys.Z);
 		
-		float speed = 175f;
-		if (upPressed) ship.pos.y += speed * dt;
-		if (downPressed) ship.pos.y -= speed * dt;
-		if (leftPressed) ship.pos.x -= speed * dt;
-		if (rightPressed) ship.pos.x += speed * dt;
-		if (zPressed) Fire();
+		if (!ship.dead) {
+			float speed = 175f;
+			if (upPressed) ship.pos.y += speed * dt;
+			if (downPressed) ship.pos.y -= speed * dt;
+			if (leftPressed) ship.pos.x -= speed * dt;
+			if (rightPressed) ship.pos.x += speed * dt;
+			if (zPressed) Fire();
+		}
+	}
+	
+	void EnemyUpdate(float dt) {
+		for (Enemy enemy : enemyList) {
+			enemy.Update(dt);
+		}
 	}
 	
 	void Fire() {
-		Bullet bullet = new Bullet(ship.pos.cpy());
+		Bullet bullet = new Bullet(ship.pos.cpy(), true);
 		bulletList.add(bullet);
 	}
 	
@@ -83,15 +99,38 @@ public class GameState extends State{
 	}
 	
 	void CheckCollisions() {
-		//Bullet - Enemy Collision
+
 		int totalRadius = 10 + 5;
 		for (int i = 0; i < bulletList.size(); i++) {
-			for (int j = 0; j < enemyList.size(); j++) {
-				if (bulletList.get(i).pos.dst(enemyList.get(j).pos) < totalRadius) {
-					bulletList.get(i).Hurt();
-					enemyList.get(j).Hurt();
+			//Bullet - Enemy Collision
+			if (bulletList.get(i).ally) {
+				for (int j = 0; j < enemyList.size(); j++) {
+					if (bulletList.get(i).pos.dst(enemyList.get(j).pos) < totalRadius) {
+						bulletList.get(i).Hurt();
+						enemyList.get(j).Hurt();
+					}
 				}
 			}
+			
+			if (!bulletList.get(i).ally) {
+				if (bulletList.get(i).pos.dst(ship.pos) < totalRadius) {
+					bulletList.get(i).Hurt();
+					ship.Hurt();
+				}
+			}
+		}
+	}
+	
+	public void enemyFire(Vector2 pos) {
+		float frontOfShip = 5;
+		pos.y -= frontOfShip;
+		Bullet bullet = new Bullet(pos.cpy(), false);
+		bulletList.add(bullet);
+	}
+	
+	void CheckWin() {
+		if (enemyList.size() == 0) {
+			System.out.println("YOU WIN");
 		}
 	}
 }

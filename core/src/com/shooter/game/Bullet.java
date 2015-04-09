@@ -6,13 +6,16 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bullet extends GameObject {
-	public Bullet(Vector2 inPos) {
+	boolean ally;
+	public Bullet(Vector2 inPos, boolean allyIn) {
 		super(new Sprite(new Texture("BulletBill.png")), inPos.add(0,20), 10);
+		ally = allyIn;
 	}
 	
 	public void Update(float dt) {
 		float speed = 200;
-		pos.add(0,speed * dt);
+		if (!ally) speed *= -1;
+		pos.add(0, speed * dt);
 	}
 	
 	public boolean OffScreen() {
